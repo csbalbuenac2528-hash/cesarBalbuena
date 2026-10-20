@@ -98,3 +98,23 @@ REST_FRAMEWORK = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+'configuracion'
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # Terceros
+    'rest_framework',
+    'whitenoise.runserver_nostatic',
+    # Apps del ERP
+    'clientes',
+    'proveedores',
+    'productos',
+    'ventas',
+    'reportes',
+    'configuracion',   # ← nueva app W05
+]
