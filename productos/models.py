@@ -1,12 +1,12 @@
-# productos/models.py
-"""Modelos de la app productos — Espiral 2 W05.
+"""Modelos de la app productos — Espiral 2 W05/W06.
 
 Orden de implementación:
   1. Categoria  (sin FK)
-  2. Producto   (FK → Categoria, FK → Proveedor)  ← Parte 3
+  2. Producto   (FK → Categoria, FK → Proveedor)
 """
-from decimal import Decimal
 
+from decimal import Decimal
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -21,7 +21,7 @@ class Categoria(models.Model):
         descripcion: Descripción opcional.
     """
 
-    nombre      = models.CharField(
+    nombre = models.CharField(
         max_length=100, unique=True, verbose_name='Nombre'
     )
     descripcion = models.TextField(
@@ -29,14 +29,13 @@ class Categoria(models.Model):
     )
 
     class Meta:
-        verbose_name        = 'Categoría'
+        verbose_name = 'Categoría'
         verbose_name_plural = 'Categorías'
-        ordering            = ['nombre']
+        ordering = ['nombre']
 
     def __str__(self) -> str:
         return self.nombre
-    
-    # Agregar después de la clase Categoria en productos/models.py
+
 
 class Producto(models.Model):
     """Artículo del inventario del ERP.
@@ -46,17 +45,17 @@ class Producto(models.Model):
         D-02: proveedor usa on_delete=SET_NULL (puede ser null).
     """
 
-    nombre    = models.CharField(
+    nombre = models.CharField(
         max_length=200, verbose_name='Nombre'
     )
-    precio    = models.DecimalField(
+    precio = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.00'))],
         verbose_name='Precio ($)',
         help_text='El precio no puede ser negativo.'
     )
-    stock     = models.IntegerField(
+    stock = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
         verbose_name='Stock disponible'
@@ -75,17 +74,44 @@ class Producto(models.Model):
         related_name='productos',
         verbose_name='Proveedor'
     )
-    activo    = models.BooleanField(
+    activo = models.BooleanField(
         default=True, verbose_name='Activo'
     )
-    creado    = models.DateTimeField(
+    creado = models.DateTimeField(
         auto_now_add=True, verbose_name='Fecha de registro'
     )
 
     class Meta:
-        verbose_name        = 'Producto'
+        verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
-        ordering            = ['nombre']
+        ordering = ['nombre']
 
     def __str__(self) -> str:
+        # CORRECCIÓN W05: Formato exacto para el test
         return f"{self.nombre} (${self.precio:.2f})"
+
+    def clean(self) -> None:
+        """Validaciones de negocio cruzadas para Producto.
+
+        Ejecutadas por full_clean() (formularios y llamadas explícitas).
+        No se ejecutan con save() directo.
+
+        Raises:
+            ValidationError: si precio < 0 o stock < 0.
+        """
+        errors = {}
+
+        if self.precio is not None and self.precio < 0:
+            errors['precio'] = (
+                'El precio no puede ser negativo. '
+                f'Valor recibido: {self.precio}'
+            )
+
+        if self.stock is not None and self.stock < 0:
+            errors['stock'] = (
+                'El stock no puede ser negativo. '
+                f'Valor recibido: {self.stock}'
+            )
+
+        if errors:
+            raise ValidationError(errors)
