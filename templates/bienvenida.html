@@ -1,279 +1,185 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio | Hala Madrid ERP{% endblock %}
+{% block title %}Hala Madrid | ERP System{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Forzamos el fondo oscuro para esta página */
-    body {
-        background-color: #08090C !important; /* Negro profundo */
-        color: #E2EAF4;
+    /* Forzamos el fondo puro (negro o blanco) sin cuadrículas */
+    html, body {
+        background-color: var(--clr-bg) !important;
+        background-image: none !important;
     }
-    
-    .madrid-hero {
-        background: linear-gradient(135deg, #0F121A 0%, #161C28 100%);
-        border-radius: 20px;
-        border: 2px solid #00F0FF; /* Cian Neón */
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.2), inset 0 0 20px rgba(0, 240, 255, 0.05);
-        padding: 3rem 2rem;
+
+    .cyber-hero {
+        padding: 4rem 1rem;
         text-align: center;
-        margin-bottom: 2.5rem;
+        position: relative;
+    }
+
+    .cyber-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 4.5rem;
+        font-weight: 900;
+        color: var(--clr-text);
+        letter-spacing: 4px;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        animation: floatTitle 4s ease-in-out infinite;
+    }
+
+    @keyframes floatTitle {
+        0% { transform: translateY(0px); text-shadow: 0 0 20px rgba(254, 190, 16, 0.6), 0 0 40px rgba(254, 190, 16, 0.3); }
+        50% { transform: translateY(-15px); text-shadow: 0 0 30px rgba(254, 190, 16, 0.8), 0 0 60px rgba(254, 190, 16, 0.5); }
+        100% { transform: translateY(0px); text-shadow: 0 0 20px rgba(254, 190, 16, 0.6), 0 0 40px rgba(254, 190, 16, 0.3); }
+    }
+
+    .cyber-subtitle {
+        font-size: 1.4rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        font-weight: 800;
+        margin-bottom: 3rem;
+        animation: colorChange 4s linear infinite;
+    }
+
+    @keyframes colorChange {
+        0%   { color: #00F0FF; text-shadow: 0 0 10px rgba(0, 240, 255, 0.8); }
+        33%  { color: #FEBE10; text-shadow: 0 0 10px rgba(254, 190, 16, 0.8); }
+        66%  { color: #FF0055; text-shadow: 0 0 10px rgba(255, 0, 85, 0.8); }
+        100% { color: #00F0FF; text-shadow: 0 0 10px rgba(0, 240, 255, 0.8); }
+    }
+
+    .cyber-badge {
+        display: inline-block;
+        background: rgba(254, 190, 16, 0.1);
+        border: 1px solid rgba(254, 190, 16, 0.4);
+        color: #B8860B;
+        padding: 0.4rem 1.2rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 0 0.5rem;
+        text-transform: uppercase;
+    }
+
+    [data-theme="dark"] .cyber-badge {
+        color: #FEBE10; 
+    }
+
+    .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .cyber-card {
+        background: var(--clr-surface);
+        border: 1px solid var(--clr-border);
+        border-radius: 16px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
         position: relative;
         overflow: hidden;
-    }
-
-    .madrid-hero::before {
-        content: '';
-        position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 150px;
-        height: 150px;
-        background: rgba(0, 240, 255, 0.1);
-        border-radius: 50%;
-        filter: blur(40px); 
-    }
-
-    /* Estilo principal con la letra caligráfica */
-    .madrid-title {
-        font-family: 'Playfair Display', serif;
-        color: #00F0FF; /* Cian Neón */
-        font-size: 3.5rem;
-        font-weight: 900;
-        margin-bottom: 0.2rem;
-        letter-spacing: 2px;
-        text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.4);
-    }
-
-    /* Línea decorativa blanca neón */
-    .neon-divider {
-        width: 80px;
-        height: 3px;
-        background: #FFFFFF;
-        margin: 0.5rem auto 1.5rem auto;
-        box-shadow: 0 0 10px #FFFFFF, 0 0 20px rgba(255, 255, 255, 0.5);
-        border-radius: 2px;
-    }
-
-    .madrid-subtitle {
-        color: #FFFFFF; /* Blanco puro */
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-        font-family: 'Inter', sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        text-shadow: 0 0 8px rgba(255, 255, 255, 0.4); /* Brillo blanco sutil */
-    }
-
-    .madrid-badge {
-        background-color: #0A0C12;
-        color: #FFFFFF; /* Texto blanco */
-        border: 2px solid #FFFFFF; /* Borde blanco neón */
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 0.85rem;
-        display: inline-block;
-        margin: 0.25rem;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 5px rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-    }
-
-    .madrid-badge:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-    }
-
-    /* Tarjetas de los módulos */
-    .madrid-card {
-        background: #0F121A;
-        border: 1px solid #1F2633;
-        border-top: 3px solid #00F0FF; 
-        border-radius: 12px;
-        padding: 2rem 1rem;
-        text-align: center;
-        transition: all 0.4s ease;
         cursor: pointer;
-        height: 100%;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
-
-    .madrid-card:hover {
-        transform: translateY(-8px);
-        border-color: #FFFFFF; /* El borde completo se vuelve blanco */
-        border-top: 3px solid #FEBE10; /* La línea superior se mantiene dorada */
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 10px 30px rgba(254, 190, 16, 0.15);
-    }
-
-    .madrid-card-icon {
-        font-size: 2.8rem;
-        margin-bottom: 1rem;
+        text-decoration: none;
         display: block;
-        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
+        animation: floatCard 5s ease-in-out infinite;
     }
 
-    .madrid-card-title {
-        color: #00F0FF; 
-        font-weight: 800;
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+    .cyber-card:nth-child(1) { animation-delay: 0s; }
+    .cyber-card:nth-child(2) { animation-delay: 0.5s; }
+    .cyber-card:nth-child(3) { animation-delay: 1s; }
+    .cyber-card:nth-child(4) { animation-delay: 1.5s; }
+    .cyber-card:nth-child(5) { animation-delay: 2s; }
+    .cyber-card:nth-child(6) { animation-delay: 2.5s; }
+
+    @keyframes floatCard {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); }
+        100% { transform: translateY(0px); }
     }
 
-    .madrid-card-desc {
-        color: #A0AABF;
+    .cyber-card:hover {
+        animation-play-state: paused; 
+        border-color: #00F0FF;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 240, 255, 0.2);
+        transform: translateY(-10px) scale(1.02);
+    }
+
+    .cyber-card:active {
+        transform: translateY(-2px) scale(0.96); 
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(254, 190, 16, 0.4);
+        border-color: #FEBE10;
+        transition: all 0.1s ease; 
+    }
+
+    .cyber-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        filter: drop-shadow(0 0 15px rgba(254, 190, 16, 0.4));
+        transition: transform 0.4s ease;
+    }
+
+    .cyber-card:hover .cyber-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .cyber-card h3 {
+        color: var(--clr-text);
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        letter-spacing: 1px;
+    }
+
+    .cyber-card p {
+        color: var(--clr-muted);
         font-size: 0.9rem;
-    }
-
-    /* Contenedor de los escudos ASCII */
-    .ascii-container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-top: 2rem;
-    }
-
-    /* Estilo general para los escudos ASCII */
-    .ascii-art {
-        font-family: 'Courier New', Courier, monospace; /* Fuente monoespaciada */
-        font-size: 0.55rem; /* Tamaño ajustado para que quepan dos */
-        line-height: 1.1;
-        color: #FEBE10; /* Dorado */
-        text-shadow: 0 0 8px rgba(254, 190, 16, 0.5), 0 0 15px rgba(254, 190, 16, 0.3);
-        background: rgba(0,0,0,0.3);
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(254, 190, 16, 0.2);
         margin: 0;
-        white-space: pre;
-        text-align: left;
+        line-height: 1.5;
     }
 
-    /* El segundo escudo tiene un toque más cian para variar */
-    .ascii-art-2 {
-        color: #00F0FF; /* Cian Neón */
-        text-shadow: 0 0 8px rgba(0, 240, 255, 0.5), 0 0 15px rgba(0, 240, 255, 0.3);
-        border: 1px solid rgba(0, 240, 255, 0.2);
+    .gold-line {
+        width: 120px;
+        height: 2px;
+        background: #FEBE10;
+        margin: 1.5rem auto;
+        box-shadow: 0 0 15px rgba(254, 190, 16, 0.8);
     }
 
-    /* Ajuste responsivo para pantallas pequeñas */
     @media (max-width: 768px) {
-        .ascii-art {
-            font-size: 0.4rem; /* Más pequeño en móviles */
-        }
+        .cyber-title { font-size: 2.8rem; }
+        .cyber-subtitle { font-size: 1rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- HERO SECTION -->
-<div class="madrid-hero">
-    <!-- Título con las letras especiales -->
-    <h1 class="madrid-title">ℛℯ𝒶𝓁 ℳ𝒶𝒹𝓇𝒾𝒹</h1>
-    
-    <!-- Nueva línea decorativa -->
-    <div class="neon-divider"></div>
+<div class="cyber-hero">
+    <h1 class="cyber-title">ℛℯ𝒶𝓁 ℳ𝒶𝒹𝓇𝒾𝒹</h1>
+    <div class="gold-line"></div>
+    <p class="cyber-subtitle">Hala Madrid</p>
 
-    <p class="madrid-subtitle">Hala Madrid ERP · UTEC Celaya · W05</p>
-    
-    <div class="d-flex justify-content-center gap-2 flex-wrap mt-3 mb-4">
-        <span class="madrid-badge">Django 4.2 LTS</span>
-        <span class="madrid-badge">Python 3.11</span>
-        <span class="madrid-badge">Fable 5 AzulERP</span>
+    <div class="mb-5">
+        <span class="cyber-badge">Django 4.2 LTS</span>
+        <span class="cyber-badge">Python 3.11</span>
+        <span class="cyber-badge">Fable 5</span>
     </div>
 
-    <!-- Contenedor de los dos Escudos ASCII -->
-    <div class="ascii-container">
-        <!-- Escudo 1 (Dorado) -->
-        <pre class="ascii-art">
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣯⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⠿⠿⣀⡸⠿⣿⣶⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣶⣟⢛⡽⠚⠉⢙⣛⡏⠉⠛⠺⣝⢛⣷⣴⣦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⡿⣛⣭⣿⢱⠏⠀⠀⠀⢨⣯⡇⠀⠀⠀⠈⢧⢻⣯⣝⡻⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣻⠞⠁⢿⠿⢇⡀⠀⠀⠀⣼⣭⣵⡄⠀⠀⠀⣨⠞⢿⠀⠙⢾⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢀⣿⡇⡏⠀⠀⡾⣿⡿⡾⡞⢉⣧⣾⣿⣿⣗⢏⢹⣪⣺⢿⢟⡀⠀⠈⣯⣿⡆⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢸⣿⣯⣷⡇⣈⡫⠿⠿⣏⣙⣛⣋⡼⢿⠧⢄⣛⣛⣉⠿⠿⠇⣊⡈⢰⢿⣿⣷⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠈⠛⠛⠿⣄⡭⣕⠒⣯⡿⠏⢸⣃⣚⣛⣛⣀⣿⠈⢿⣯⣗⢒⡥⣅⡭⠛⠛⠋⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢷⣻⣤⣦⠴⠞⠓⠚⠛⠛⠛⠛⠚⠛⠶⢥⣄⡸⠁⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡴⠞⠋⠁⠀⣀⣀⣤⠤⠤⠶⠶⠦⢤⣀⣀⡀⠀⠉⠛⠶⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢀⡴⠞⠁⠀⣠⡴⠞⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠓⠶⣄⡀⠀⠙⢦⣀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⢀⡴⠋⠀⢀⣴⣻⠿⠻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠻⢿⡳⣄⠀⠈⠳⣄⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣠⠟⠁⢀⣴⣿⠛⠁⢀⠀⠈⠻⣦⡀⠀⣀⣀⣀⣀⣀⠀⠀⣠⠞⠁⠀⡀⠀⠙⢮⡷⣄⠀⠙⢦⠀⠀⠀⠀
-⠀⠀⠀⣴⠃⠀⣰⣯⠟⠁⢀⣴⣿⣷⣄⡀⠈⠛⠉⠉⠀⠀⠀⠈⢉⠛⠁⠀⣠⠞⠙⢧⡄⠀⠙⣾⣧⡀⠈⢷⡀⠀⠀
-⠀⠀⣸⠃⠀⣴⣳⠃⠀⣠⣿⣿⣿⡿⠋⠀⢀⠀⠀⠲⣖⠒⢲⡶⠂⠀⠀⠀⠙⢷⣄⠀⠙⣦⠀⠈⢷⢷⡀⠀⢷⠀⠀
-⠀⢠⡇⠀⣸⢳⠃⠀⣰⣿⣿⣿⠋⠀⢀⣴⣿⣷⣄⠀⠈⠷⠋⠀⢀⡼⠛⢧⡀⠀⣹⡇⠀⠘⣧⠀⠈⣿⢧⠀⠈⣧⠀
-⠀⣿⠀⠀⣏⡟⠀⢠⠟⢿⣿⠇⠀⢠⣿⣿⣿⣿⣿⣷⣄⠀⢀⣴⡋⠀⠀⠀⠻⠟⠉⠀⠀⠀⠸⡆⠀⠸⡟⡇⠀⢹⡄
-⢀⡏⠀⢸⢻⠇⠀⣸⠀⠀⡿⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⢷⠀⠀⢧⣿⠀⠀⡇
-⢸⡇⠀⣿⢸⠀⠀⡟⠀⠀⡇⠀⠀⣿⣿⣿⣿⣿⣿⠟⠿⠟⠛⠛⠻⣿⣷⣆⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⢸⢹⠀⠀⡇
-⢸⡇⠀⢻⢸⡄⠀⢿⠀⠀⣷⠀⠀⣇⠙⢿⣿⣿⣿⠀⠀⢴⣶⣶⣾⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⣼⠀⠀⣼⣿⠀⠀⡇
-⠘⣷⠀⠘⡿⣇⠀⠸⡄⠀⠹⡆⠀⠸⣆⠀⠙⢿⣿⠀⠀⠘⠛⠛⢻⣿⣿⣿⣿⣿⣷⣄⠀⠀⢀⡏⠀⢠⡇⡿⠀⢰⡇
-⠀⢻⡄⠀⢷⣿⡀⠀⢻⡄⠀⠹⣄⠀⠘⢧⣄⠀⢹⠀⠀⢤⣤⣤⣼⣿⣿⠿⠻⣿⣿⣿⣷⣄⡾⠀⠀⣼⣹⠁⠀⣾⠀
-⠀⠀⢷⠀⠘⣯⢳⡀⠀⠻⣄⠀⠘⢦⡀⠀⠈⠛⠺⠀⠀⢸⣿⡿⠟⠋⠁⠀⢀⣼⣿⣿⣿⠟⠀⠀⣰⣣⠏⠀⣸⠃⠀
-⠀⠀⠈⣷⡀⠈⢯⡻⣄⣠⠾⠁⠀⠀⠉⠳⢤⣀⡀⠀⠀⠀⠀⠀⠀⣀⣠⣶⣿⣿⣿⣿⣿⣤⡀⡼⣻⠏⠀⣰⠏⠀⠀
-⠀⠀⠀⠀⢷⡄⠈⠻⣎⠁⠀⠀⠀⠀⠀⠀⠀⠈⢹⠀⠀⣿⠛⠋⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⡿⠁⠀⣰⠋⠀⠀⠀
-⠀⠀⠀⠀⠀⠙⣄⠀⠈⠳⣄⡀⠀⠀⠀⠀⠀⠀⠸⠦⠤⠿⠀⠀⠀⠈⠻⣿⣿⣿⣿⡿⣟⡽⠋⠀⣠⠞⠁⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠈⠳⢤⡀⠈⠑⠦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⡽⠞⠁⠀⣠⡾⠋⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠲⣤⡀⠈⠉⠓⠒⠦⢤⣤⣤⣤⣤⣤⣤⡤⠖⠒⠋⠁⠀⣀⡴⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠶⢤⣀⣀⡀⠀⠀⠀⠀⠀⠀⣀⣀⣤⠴⠖⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠙⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-        </pre>
-
-        <!-- Escudo 2 (Cian Neón) - CORREGIDO -->
-        <pre class="ascii-art ascii-art-2">
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣶⣾⣿⣿⣿⣿⣶⣦⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⢿⣿⣿⣿⣽⣿⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣾⣿⣿⣿⣿⣿⣿⢿⡿⣿⣿⣿⣿⣿⣿⣿⣟⣿⡿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⠟⠉⠁⠀⠀⠀⠀⠀⠉⠈⠉⠛⠛⢿⣿⣿⢿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠸⢻⣿⣿⡟⢁⡴⠶⠶⣶⣶⣤⡀⠀⠀⠀⢀⣤⣤⣄⣀⣀⢸⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⡏⢀⣴⣶⣲⢿⣿⠆⠀⠀⢠⣿⣿⣭⣥⣄⡉⢳⡟⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⡿⠃⠈⠛⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠉⠉⠹⠗⠙⡇⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢀⡄⢿⣿⠁⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⡺⡿⣿⣿⡄⠀⠀⠀⠀⠀⠀⢶⣾⠿⠶⠷⣶⠀⠀⠀⠀⠀⠀⢠⣿⣵⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣿⡀⢻⣿⣷⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⣼⣿⡋⢏⡃⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠈⢿⠿⣿⣟⠀⠀⠀⠀⠀⢀⡴⠖⠚⠛⠓⠶⣤⡀⠀⠀⠀⠀⢸⣿⣦⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠐⠛⣿⠀⠀⠀⠀⠀⠀⠀⠐⢦⣤⣤⡦⠈⠀⠀⠀⠀⠀⣸⠷⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣦⣀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣨⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣷⣼⣦⡀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣷⣶⣦⣶⣶⣶⣾⣿⣿⣿⣿⢿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠟⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⠀⠈⢿⡿⠛⠛⠛⠛⠛⠛⠛⠉⠉⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⠀⠀⠈⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡇⠀⠀⠀⠀⠈⠻⢷⣤⣀⡴⠚⠀⠀⠀⠀⠀⠀⣾⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⣀⢴⣾⣿⠁⠀⠀⠀⠀⠀⠀⠀⠛⠋⠁⠀⠀⠀⠀⠀⠀⠀⣿⣿⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢀⣠⢞⡅⠈⢿⣿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣰⡿⠃⠀⣌⠲⢄⡀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣀⢴⣫⠾⠋⠀⠀⠀⠈⠛⢿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⠾⠟⠉⠀⠀⠀⠈⠳⢤⡉⠒⢤⣀⠀⠀⠀
-⣀⠤⢖⣮⠷⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠓⠒⠒⠒⠒⠒⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠳⢤⣈⠑⠲
-⣷⠶⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠳⡾
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡄
-⢽⣿⣿⠛⢻⣿⣿⣿⣿⠛⠛⠛⠛⢻⣿⣿⠿⠛⠛⠿⣿⡟⠛⠛⠛⠛⣿⡟⢿⣿⣿⣿⠛⢻⡟⠛⠛⠛⠻⣿⣿⣿⡇
-⢸⣿⣿⠀⢸⣿⣿⣿⣿⠀⢿⣿⣿⣿⡿⠁⣴⣶⣶⣾⣿⡇⠀⣿⣿⣿⣿⡏⢀⠙⢿⣿⠀⢸⡇⠀⣷⣷⣆⠈⢿⣿⡇
-⢸⣿⣿⠀⢸⣿⣿⣿⣿⠀⢤⣤⣴⣿⣧⠀⢿⣿⣤⠀⣿⡇⠀⣤⣤⣼⣿⡇⠀⣷⣄⠙⠀⢸⡇⠀⣿⣿⡟⠀⣸⣿⡇
-⢸⣿⣿⣀⣈⣉⣉⣉⣿⣀⣈⣉⣉⣹⣿⣷⣄⣈⣁⣤⣿⣇⣀⣉⣉⣉⣿⣇⣀⣿⣿⣷⣄⣸⣧⣀⣉⣉⣀⣴⣿⣿⡇
-        </pre>
-    </div>
-</div>
-
-<!-- MÓDULOS -->
-<div class="row g-4 mt-2">
-    {% for m in modulos %}
-    <div class="col-md-4 col-sm-6">
-        <div class="madrid-card" onclick="window.location='{{ m.url }}'">
-            <span class="madrid-card-icon">{{ m.icono }}</span>
-            <h3 class="madrid-card-title">{{ m.nombre }}</h3>
-            <p class="madrid-card-desc">{{ m.descripcion }}</p>
+    <div class="container">
+        <div class="module-grid">
+            {% for m in modulos %}
+            <a href="{{ m.url }}" class="cyber-card">
+                <span class="cyber-icon">{{ m.icono }}</span>
+                <h3>{{ m.nombre }}</h3>
+                <p>{{ m.descripcion }}</p>
+            </a>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %} 
 </div>
 {% endblock %}
