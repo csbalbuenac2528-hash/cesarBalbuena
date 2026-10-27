@@ -1,32 +1,42 @@
-# core/settings.py
-import environ
-from pathlib import Path
+"""
+Django settings for core project.
+ERP Django — UTEC Celaya (W01 - W09)
+"""
 
+from pathlib import Path
+import environ
+import os
+
+# ── RUTAS BASE ──────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ── Variables de entorno ──────────────────────────────────────────────────
+# ── VARIABLES DE ENTORNO ────────────────────────────────────────────────────
 env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(BASE_DIR / '.env')
 
-SECRET_KEY  = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
-DEBUG       = env('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+SECRET_KEY = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
+DEBUG = env('DEBUG', default=True)
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
-# ── Apps instaladas ───────────────────────────────────────────────────────
-# core/settings.py — actualizar INSTALLED_APPS
+# ── APPS INSTALADAS ─────────────────────────────────────────────────────────
 INSTALLED_APPS = [
-    # Jazzmin PRIMERO — antes de django.contrib.admin
-    'jazzmin',                          # ← nueva línea, primera posición
-
+    'jazzmin',  # Interfaz del admin (W06)
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',        # Requerido por allauth (W09)
+
     # Terceros
+    'allauth',                     # W09
+    'allauth.account',             # W09
+    'allauth.socialaccount',       # W09
     'rest_framework',
     'whitenoise.runserver_nostatic',
+
     # Apps del ERP
     'clientes',
     'proveedores',
@@ -36,6 +46,7 @@ INSTALLED_APPS = [
     'configuracion',
 ]
 
+# ── MIDDLEWARE ──────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -45,11 +56,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # W09 (debe ir al final)
 ]
 
 ROOT_URLCONF = 'core.urls'
 
-# ── Templates ─────────────────────────────────────────────────────────────
+# ── TEMPLATES ───────────────────────────────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -58,7 +70,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request', # Requerido por allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -66,7 +78,9 @@ TEMPLATES = [
     },
 ]
 
-# ── Base de datos ─────────────────────────────────────────────────────────
+WSGI_APPLICATION = 'core.wsgi.application'
+
+# ── BASE DE DATOS ───────────────────────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -74,148 +88,70 @@ DATABASES = {
     }
 }
 
-# ── Internacionalización ──────────────────────────────────────────────────
+# ── VALIDACIÓN DE CONTRASEÑAS ───────────────────────────────────────────────
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
+
+# ── INTERNACIONALIZACIÓN ────────────────────────────────────────────────────
 LANGUAGE_CODE = 'es-mx'
 TIME_ZONE     = 'America/Mexico_City'
 USE_I18N      = True
 USE_TZ        = True
 
-# ── Archivos estáticos ────────────────────────────────────────────────────
+# ── ARCHIVOS ESTÁTICOS Y MEDIA ──────────────────────────────────────────────
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ── Archivos media ────────────────────────────────────────────────────────
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ── Autenticación ─────────────────────────────────────────────────────────
+# ── AUTENTICACIÓN Y REDIRECCIONES ───────────────────────────────────────────
 LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = '/productos/'
 LOGOUT_REDIRECT_URL = '/'
 
-# ── DRF ──────────────────────────────────────────────────────────────────
+# ── DJANGO-ALLAUTH (W09) ────────────────────────────────────────────────────
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+ACCOUNT_LOGIN_METHODS          = {'username'}
+ACCOUNT_EMAIL_REQUIRED         = False
+ACCOUNT_EMAIL_VERIFICATION     = 'none'
+ACCOUNT_LOGOUT_ON_GET          = True
+ACCOUNT_SESSION_REMEMBER       = True
+
+# ── DRF ─────────────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 }
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-'configuracion'
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Terceros
-    'rest_framework',
-    'whitenoise.runserver_nostatic',
-    # Apps del ERP
-    'clientes',
-    'proveedores',
-    'productos',
-    'ventas',
-    'reportes',
-    'configuracion',   # ← nueva app W05
-]
-# ── JAZZMIN — Personalización del admin con Fable 5 AzulERP ───────────────
+# ── JAZZMIN (W06) ───────────────────────────────────────────────────────────
 JAZZMIN_SETTINGS = {
-    # Identidad
-    'site_title':       'ERP Django',
-    'site_header':      'ERP UTEC Celaya',
-    'site_brand':       '📦 ERP Django',
-    'welcome_sign':     'Bienvenido al Sistema ERP · UTEC Celaya',
-    'copyright':        'MC. Román Fernando López González · UTEC Celaya',
-
-    # Icono del sitio (usar emoji como fallback)
-    'site_icon':        None,
-    'site_logo':        None,    # ruta a logo en static/ (agregar en W11+)
-
-    # Búsqueda global en el admin
-    'search_model':     ['clientes.Cliente', 'productos.Producto'],
-
-    # Menú superior (top navigation)
-    'topmenu_links': [
-        {'name': 'Inicio ERP',   'url': '/', 'new_window': False},
-        {'name': 'Productos',    'url': '/productos/'},
-        {'name': 'Clientes',     'url': '/clientes/'},
-        {'name': 'Ventas',       'url': '/ventas/'},
+    "site_title": "ERP Django Admin",
+    "site_header": "ERP UTEC",
+    "site_brand": "ERP Django",
+    "welcome_sign": "Bienvenido al ERP de UTEC Celaya",
+    "copyright": "UTEC Celaya",
+    "search_model": ["auth.User", "productos.Producto", "clientes.Cliente"],
+    "topmenu_links": [
+        {"name": "Inicio", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Ver Sitio", "url": "/", "new_window": True},
     ],
-
-    # Menú de usuario (avatar)
-    'usermenu_links': [
-        {'name': 'Ver ERP', 'url': '/', 'new_window': False},
-    ],
-
-    # Menú lateral: orden de apps y modelos
-    'order_with_respect_to': [
-        'clientes', 'proveedores', 'productos',
-        'ventas', 'configuracion', 'auth',
-    ],
-
-    # Iconos de Font Awesome para cada modelo
-    'icons': {
-        'auth':                       'fas fa-users-cog',
-        'auth.user':                  'fas fa-user',
-        'auth.Group':                 'fas fa-users',
-        'clientes.Cliente':           'fas fa-user-tie',
-        'proveedores.Proveedor':      'fas fa-truck',
-        'productos.Categoria':        'fas fa-tags',
-        'productos.Producto':         'fas fa-box',
-        'ventas.Venta':               'fas fa-file-invoice-dollar',
-        'ventas.DetalleVenta':        'fas fa-list',
-        'ventas.Pedido':              'fas fa-shopping-cart',
-        'configuracion.ConfiguracionERP': 'fas fa-cogs',
-    },
-    'default_icon_parents': 'fas fa-folder',
-    'default_icon_children': 'fas fa-circle',
-
-    # Apariencia
-    'related_modal_active':     True,
-    'custom_css':               'erp_custom.css',   # archivo en static/
-    'show_sidebar':             True,
-    'navigation_expanded':      True,
-    'hide_apps':                [],
-    'hide_models':              [],
-
-    # UI tweaks
-    'changeform_format':        'horizontal_tabs',
-    'language_chooser':         False,
+    "show_sidebar": True,
+    "navigation_expanded": True,
 }
 
-JAZZMIN_UI_TWEAKS = {
-    'navbar_small_text':        False,
-    'footer_small_text':        False,
-    'body_small_text':          False,
-    'brand_small_text':         False,
-    'brand_colour':             'navbar-dark',
-    'accent':                   'accent-navy',
-    'navbar':                   'navbar-dark',
-    'no_navbar_border':         False,
-    'navbar_fixed':             True,
-    'layout_boxed':             False,
-    'footer_fixed':             False,
-    'sidebar_fixed':            True,
-    'sidebar':                  'sidebar-dark-navy',
-    'sidebar_nav_small_text':   False,
-    'sidebar_disable_expand':   False,
-    'sidebar_nav_child_indent': True,
-    'sidebar_nav_compact_style': False,
-    'sidebar_nav_legacy_style': False,
-    'sidebar_nav_flat_style':   False,
-    'theme':                    'default',
-    'dark_mode_theme':          None,
-    'button_classes': {
-        'primary':   'btn-primary',
-        'secondary': 'btn-secondary',
-        'info':      'btn-info',
-        'warning':   'btn-warning',
-        'danger':    'btn-danger',
-        'success':   'btn-success',
-    },
-}
+# ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
