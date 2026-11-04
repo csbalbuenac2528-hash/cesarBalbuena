@@ -155,3 +155,4 @@ JAZZMIN_SETTINGS = {
 
 # ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+WHITENOISE_MANIFEST_STRICT = False 
