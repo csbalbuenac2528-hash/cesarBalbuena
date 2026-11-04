@@ -108,6 +108,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# ── ESTA ES LA LÍNEA MÁGICA PARA RENDER CON JAZZMIN ──
+WHITENOISE_MANIFEST_STRICT = False 
+
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -154,5 +157,4 @@ JAZZMIN_SETTINGS = {
 }
 
 # ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-WHITENOISE_MANIFEST_STRICT = False 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' 
