@@ -1,6 +1,6 @@
 """
 Django settings for core project.
-ERP Django — UTEC Celaya (W01 - W09)
+ERP Django — UTEC Celaya (W01 - W10)
 """
 
 from pathlib import Path
@@ -20,7 +20,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 # ── APPS INSTALADAS ─────────────────────────────────────────────────────────
 INSTALLED_APPS = [
-    'jazzmin',  # Interfaz del admin (W06)
+    'jazzmin',  
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,13 +28,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',        # Requerido por allauth (W09)
+    'django.contrib.sites',        
 
     # Terceros
-    'allauth',                     # W09
-    'allauth.account',             # W09
-    'allauth.socialaccount',       # W09
+    'allauth',                     
+    'allauth.account',             
+    'allauth.socialaccount',       
     'rest_framework',
+    'rest_framework.authtoken',    # <-- Requerido para la API de la W10
     'whitenoise.runserver_nostatic',
 
     # Apps del ERP
@@ -56,7 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # W09 (debe ir al final)
+    'allauth.account.middleware.AccountMiddleware',  
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -65,12 +66,12 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],       # carpeta global de templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request', # Requerido por allauth
+                'django.template.context_processors.request', 
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -101,17 +102,17 @@ LANGUAGE_CODE = 'es-mx'
 TIME_ZONE     = 'America/Mexico_City'
 USE_I18N      = True
 USE_TZ        = True
- 
+
 # ── ARCHIVOS ESTÁTICOS Y MEDIA ──────────────────────────────────────────────
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
 if DEBUG:
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 else:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ── ESTA ES LA LÍNEA MÁGICA PARA RENDER CON JAZZMIN ──
 WHITENOISE_MANIFEST_STRICT = False 
 
 MEDIA_URL  = '/media/'
@@ -136,11 +137,17 @@ ACCOUNT_EMAIL_VERIFICATION     = 'none'
 ACCOUNT_LOGOUT_ON_GET          = True
 ACCOUNT_SESSION_REMEMBER       = True
 
-# ── DRF ─────────────────────────────────────────────────────────────────────
+# ── DRF (W10) ───────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',   # Para el navegador
+        'rest_framework.authentication.TokenAuthentication',     # Para apps externas
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 # ── JAZZMIN (W06) ───────────────────────────────────────────────────────────
@@ -160,4 +167,4 @@ JAZZMIN_SETTINGS = {
 }
 
 # ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
