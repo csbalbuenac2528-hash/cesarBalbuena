@@ -1,180 +1,174 @@
 {% extends "base.html" %}
 
-{% block title %}Hala Madrid | ERP System{% endblock %}
+{% block title %}Real Madrid | ERP System{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Forzamos el fondo puro (negro o blanco) sin cuadrículas */
-    html, body {
-        background-color: var(--clr-bg) !important;
-        background-image: none !important;
+    /* Fondo oscuro con un sutil patrón de cuadrícula estilo "Campo de juego" */
+    body {
+        background-color: #05080f !important; /* Negro azulado profundo */
+        background-image: 
+            linear-gradient(rgba(0, 83, 158, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 83, 158, 0.1) 1px, transparent 1px);
+        background-size: 40px 40px;
+        color: #E2EAF4;
+        font-family: 'Inter', sans-serif;
     }
 
-    .cyber-hero {
-        padding: 4rem 1rem;
+    /* Contenedor principal */
+    .madrid-hero {
+        padding: 3rem 1rem;
         text-align: center;
-        position: relative;
     }
 
-    .cyber-title {
+    /* Título Principal (Letras del Madrid con efecto Neón Blanco y Dorado) */
+    .madrid-title {
         font-family: 'Playfair Display', serif;
         font-size: 4.5rem;
         font-weight: 900;
-        color: var(--clr-text);
+        color: #FFFFFF;
         letter-spacing: 4px;
         margin-bottom: 0.5rem;
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.8),
+            0 0 20px rgba(254, 190, 16, 0.6),
+            0 0 40px rgba(254, 190, 16, 0.4);
         display: inline-block;
         animation: floatTitle 4s ease-in-out infinite;
     }
 
     @keyframes floatTitle {
-        0% { transform: translateY(0px); text-shadow: 0 0 20px rgba(254, 190, 16, 0.6), 0 0 40px rgba(254, 190, 16, 0.3); }
-        50% { transform: translateY(-15px); text-shadow: 0 0 30px rgba(254, 190, 16, 0.8), 0 0 60px rgba(254, 190, 16, 0.5); }
-        100% { transform: translateY(0px); text-shadow: 0 0 20px rgba(254, 190, 16, 0.6), 0 0 40px rgba(254, 190, 16, 0.3); }
-    }
-
-    .cyber-subtitle {
-        font-size: 1.4rem;
-        letter-spacing: 4px;
-        text-transform: uppercase;
-        font-weight: 800;
-        margin-bottom: 3rem;
-        animation: colorChange 4s linear infinite;
-    }
-
-    @keyframes colorChange {
-        0%   { color: #00F0FF; text-shadow: 0 0 10px rgba(0, 240, 255, 0.8); }
-        33%  { color: #FEBE10; text-shadow: 0 0 10px rgba(254, 190, 16, 0.8); }
-        66%  { color: #FF0055; text-shadow: 0 0 10px rgba(255, 0, 85, 0.8); }
-        100% { color: #00F0FF; text-shadow: 0 0 10px rgba(0, 240, 255, 0.8); }
-    }
-
-    .cyber-badge {
-        display: inline-block;
-        background: rgba(254, 190, 16, 0.1);
-        border: 1px solid rgba(254, 190, 16, 0.4);
-        color: #B8860B;
-        padding: 0.4rem 1.2rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        margin: 0 0.5rem;
-        text-transform: uppercase;
-    }
-
-    [data-theme="dark"] .cyber-badge {
-        color: #FEBE10; 
-    }
-
-    .module-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
-    }
-
-    .cyber-card {
-        background: var(--clr-surface);
-        border: 1px solid var(--clr-border);
-        border-radius: 16px;
-        padding: 2.5rem 1.5rem;
-        text-align: center;
-        transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-        position: relative;
-        overflow: hidden;
-        cursor: pointer;
-        text-decoration: none;
-        display: block;
-        animation: floatCard 5s ease-in-out infinite;
-    }
-
-    .cyber-card:nth-child(1) { animation-delay: 0s; }
-    .cyber-card:nth-child(2) { animation-delay: 0.5s; }
-    .cyber-card:nth-child(3) { animation-delay: 1s; }
-    .cyber-card:nth-child(4) { animation-delay: 1.5s; }
-    .cyber-card:nth-child(5) { animation-delay: 2s; }
-    .cyber-card:nth-child(6) { animation-delay: 2.5s; }
-
-    @keyframes floatCard {
         0% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); }
+        50% { transform: translateY(-10px); text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(254, 190, 16, 0.8); }
         100% { transform: translateY(0px); }
     }
 
-    .cyber-card:hover {
-        animation-play-state: paused; 
-        border-color: #00F0FF;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 240, 255, 0.2);
-        transform: translateY(-10px) scale(1.02);
-    }
-
-    .cyber-card:active {
-        transform: translateY(-2px) scale(0.96); 
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(254, 190, 16, 0.4);
-        border-color: #FEBE10;
-        transition: all 0.1s ease; 
-    }
-
-    .cyber-icon {
-        font-size: 3.5rem;
-        margin-bottom: 1.5rem;
-        display: inline-block;
-        filter: drop-shadow(0 0 15px rgba(254, 190, 16, 0.4));
-        transition: transform 0.4s ease;
-    }
-
-    .cyber-card:hover .cyber-icon {
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    .cyber-card h3 {
-        color: var(--clr-text);
-        font-size: 1.3rem;
+    /* Subtítulo */
+    .madrid-subtitle {
+        font-size: 1rem;
+        color: #FEBE10; /* Dorado */
+        letter-spacing: 5px;
+        text-transform: uppercase;
         font-weight: 700;
-        margin-bottom: 0.8rem;
-        letter-spacing: 1px;
+        margin-bottom: 3rem;
+        text-shadow: 0 0 10px rgba(254, 190, 16, 0.5);
     }
 
-    .cyber-card p {
-        color: var(--clr-muted);
-        font-size: 0.9rem;
-        margin: 0;
-        line-height: 1.5;
+    /* Grid de Tarjetas (Estilo Premium) */
+    .madrid-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+        padding: 0 1rem;
     }
 
-    .gold-line {
-        width: 120px;
-        height: 2px;
-        background: #FEBE10;
-        margin: 1.5rem auto;
+    /* Tarjeta estilo Cristal (Glassmorphism) con detalles Azul Rey */
+    .madrid-card {
+        background: rgba(10, 16, 30, 0.8);
+        border: 2px solid #1A365D; /* Azul oscuro */
+        border-radius: 16px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        text-decoration: none;
+        position: relative;
+        transition: all 0.4s ease;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Línea superior que se ilumina al pasar el mouse */
+    .madrid-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 4px;
+        background: #00539E; /* Azul Rey */
+        transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* Efecto Hover de la tarjeta */
+    .madrid-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: #FEBE10; /* Borde Dorado */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(254, 190, 16, 0.2);
+        background: rgba(15, 25, 45, 0.9);
+    }
+
+    .madrid-card:hover::before {
+        background: #FEBE10; /* La línea superior cambia a Dorado */
         box-shadow: 0 0 15px rgba(254, 190, 16, 0.8);
     }
 
+    /* Iconos */
+    .madrid-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        transition: transform 0.4s ease;
+    }
+
+    .madrid-card:hover .madrid-icon {
+        transform: scale(1.15) rotate(5deg);
+        filter: drop-shadow(0 0 15px rgba(254, 190, 16, 0.6)); /* Brillo dorado */
+    }
+
+    /* Título de la tarjeta */
+    .madrid-card h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+        transition: color 0.3s ease;
+    }
+
+    .madrid-card:hover h3 {
+        color: #FEBE10; /* Cambia a Dorado al pasar el mouse */
+    }
+
+    /* Texto descriptivo */
+    .madrid-card p {
+        color: #8AA0B8;
+        font-size: 0.9rem;
+        margin: 0;
+        line-height: 1.5;
+        font-family: 'Inter', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Línea decorativa */
+    .gold-line {
+        width: 150px;
+        height: 3px;
+        background: #FEBE10;
+        margin: 1.5rem auto;
+        box-shadow: 0 0 15px rgba(254, 190, 16, 0.8);
+        border-radius: 2px;
+    }
+
+    /* Responsividad */
     @media (max-width: 768px) {
-        .cyber-title { font-size: 2.8rem; }
-        .cyber-subtitle { font-size: 1rem; }
+        .madrid-title { font-size: 2.8rem; }
+        .madrid-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="cyber-hero">
-    <h1 class="cyber-title">ℛℯ𝒶𝓁 ℳ𝒶𝒹𝓇𝒾𝒹</h1>
+<div class="madrid-hero">
+    <!-- Título Principal -->
+    <h1 class="madrid-title">ℛℯ𝒶𝓁 ℳ𝒶𝒹𝓇𝒾𝒹</h1>
     <div class="gold-line"></div>
-    <p class="cyber-subtitle">Hala Madrid</p>
+    <p class="madrid-subtitle">Hala Madrid · Sistema ERP</p>
 
-    <div class="mb-5">
-        <span class="cyber-badge">Django 4.2 LTS</span>
-        <span class="cyber-badge">Python 3.11</span>
-        <span class="cyber-badge">Fable 5</span>
-    </div>
-
+    <!-- Grid de Módulos -->
     <div class="container">
-        <div class="module-grid">
+        <div class="madrid-grid">
             {% for m in modulos %}
-            <a href="{{ m.url }}" class="cyber-card">
-                <span class="cyber-icon">{{ m.icono }}</span>
+            <a href="{{ m.url }}" class="madrid-card">
+                <span class="madrid-icon">{{ m.icono }}</span>
                 <h3>{{ m.nombre }}</h3>
                 <p>{{ m.descripcion }}</p>
             </a>
@@ -182,4 +176,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %} 
