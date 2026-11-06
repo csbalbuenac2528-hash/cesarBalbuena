@@ -1,32 +1,18 @@
-"""Modelos de la app productos — Espiral 2 W05/W06.
-
-Orden de implementación:
-  1. Categoria  (sin FK)
-  2. Producto   (FK → Categoria, FK → Proveedor)
-"""
+"""Modelos de la app productos — Espiral 4 W11."""
 
 from decimal import Decimal
-from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
 from django.db import models
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 from proveedores.models import Proveedor
+from .validators import validar_imagen_producto  # <-- Importación del validador
 
 
 class Categoria(models.Model):
-    """Categoría para clasificar productos del catálogo.
-
-    Atributos:
-        nombre:      Nombre único de la categoría.
-        descripcion: Descripción opcional.
-    """
-
-    nombre = models.CharField(
-        max_length=100, unique=True, verbose_name='Nombre'
-    )
-    descripcion = models.TextField(
-        blank=True, verbose_name='Descripción'
-    )
+    """Categoría para clasificar productos del catálogo."""
+    nombre = models.CharField(max_length=100, unique=True, verbose_name='Nombre')
+    descripcion = models.TextField(blank=True, verbose_name='Descripción')
 
     class Meta:
         verbose_name = 'Categoría'
@@ -38,16 +24,9 @@ class Categoria(models.Model):
 
 
 class Producto(models.Model):
-    """Artículo del inventario del ERP.
+    """Artículo del inventario del ERP."""
 
-    Decisiones de diseño aplicadas:
-        D-01: categoria usa on_delete=PROTECT.
-        D-02: proveedor usa on_delete=SET_NULL (puede ser null).
-    """
-
-    nombre = models.CharField(
-        max_length=200, verbose_name='Nombre'
-    )
+    nombre = models.CharField(max_length=200, verbose_name='Nombre')
     precio = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -62,24 +41,32 @@ class Producto(models.Model):
     )
     categoria = models.ForeignKey(
         Categoria,
-        on_delete=models.PROTECT,          # D-01: no borrar categoría con productos
+        on_delete=models.PROTECT,
         related_name='productos',
         verbose_name='Categoría'
     )
     proveedor = models.ForeignKey(
         Proveedor,
-        on_delete=models.SET_NULL,         # D-02: producto puede quedar sin proveedor
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='productos',
         verbose_name='Proveedor'
     )
-    activo = models.BooleanField(
-        default=True, verbose_name='Activo'
+    
+    # ===== AQUÍ ESTÁ EL CAMPO DE LA IMAGEN =====
+    imagen = models.ImageField(
+        upload_to='productos/',
+        null=True,
+        blank=True,
+        verbose_name='Imagen del producto',
+        help_text='Formatos: JPEG, PNG, WEBP. Máximo 5 MB.',
+        validators=[validar_imagen_producto],   # <-- ESTA ES LA LÍNEA
     )
-    creado = models.DateTimeField(
-        auto_now_add=True, verbose_name='Fecha de registro'
-    )
+    # ===========================================
+
+    activo = models.BooleanField(default=True, verbose_name='Activo')
+    creado = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de registro')
 
     class Meta:
         verbose_name = 'Producto'
@@ -87,31 +74,14 @@ class Producto(models.Model):
         ordering = ['nombre']
 
     def __str__(self) -> str:
-        # CORRECCIÓN W05: Formato exacto para el test
         return f"{self.nombre} (${self.precio:.2f})"
 
     def clean(self) -> None:
-        """Validaciones de negocio cruzadas para Producto.
-
-        Ejecutadas por full_clean() (formularios y llamadas explícitas).
-        No se ejecutan con save() directo.
-
-        Raises:
-            ValidationError: si precio < 0 o stock < 0.
-        """
+        """Validaciones de negocio cruzadas para Producto."""
         errors = {}
-
         if self.precio is not None and self.precio < 0:
-            errors['precio'] = (
-                'El precio no puede ser negativo. '
-                f'Valor recibido: {self.precio}'
-            )
-
+            errors['precio'] = 'El precio no puede ser negativo.'
         if self.stock is not None and self.stock < 0:
-            errors['stock'] = (
-                'El stock no puede ser negativo. '
-                f'Valor recibido: {self.stock}'
-            )
-
+            errors['stock'] = 'El stock no puede ser negativo.'
         if errors:
             raise ValidationError(errors)

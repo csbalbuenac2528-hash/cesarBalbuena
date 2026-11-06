@@ -1,16 +1,14 @@
 """
 Django settings for core project.
-ERP Django — UTEC Celaya (W01 - W10)
+ERP Django — UTEC Celaya (Desarrollo Local).
 """
 
 from pathlib import Path
 import environ
 import os
 
-# ── RUTAS BASE ──────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ── VARIABLES DE ENTORNO ────────────────────────────────────────────────────
 env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(BASE_DIR / '.env')
 
@@ -18,10 +16,8 @@ SECRET_KEY = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
 DEBUG = env('DEBUG', default=True)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
-# ── APPS INSTALADAS ─────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'jazzmin',  
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,16 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',        
-
-    # Terceros
     'allauth',                     
     'allauth.account',             
     'allauth.socialaccount',       
     'rest_framework',
-    'rest_framework.authtoken',    # <-- Requerido para la API de la W10
+    'rest_framework.authtoken',    
     'whitenoise.runserver_nostatic',
-
-    # Apps del ERP
     'clientes',
     'proveedores',
     'productos',
@@ -47,7 +39,6 @@ INSTALLED_APPS = [
     'configuracion',
 ]
 
-# ── MIDDLEWARE ──────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -62,7 +53,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
-# ── TEMPLATES ───────────────────────────────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -81,7 +71,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# ── BASE DE DATOS ───────────────────────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,7 +78,6 @@ DATABASES = {
     }
 }
 
-# ── VALIDACIÓN DE CONTRASEÑAS ───────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -97,51 +85,39 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ── INTERNACIONALIZACIÓN ────────────────────────────────────────────────────
 LANGUAGE_CODE = 'es-mx'
 TIME_ZONE     = 'America/Mexico_City'
 USE_I18N      = True
 USE_TZ        = True
 
-# ── ARCHIVOS ESTÁTICOS Y MEDIA ──────────────────────────────────────────────
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-if DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-WHITENOISE_MANIFEST_STRICT = False 
+# NOTA: Se quitó STATICFILES_STORAGE para evitar fallos con Jazzmin en tests
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ── AUTENTICACIÓN Y REDIRECCIONES ───────────────────────────────────────────
 LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = '/productos/'
 LOGOUT_REDIRECT_URL = '/'
 
-# ── DJANGO-ALLAUTH (W09) ────────────────────────────────────────────────────
 SITE_ID = 1
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
 ACCOUNT_LOGIN_METHODS          = {'username'}
 ACCOUNT_EMAIL_REQUIRED         = False
 ACCOUNT_EMAIL_VERIFICATION     = 'none'
 ACCOUNT_LOGOUT_ON_GET          = True
 ACCOUNT_SESSION_REMEMBER       = True
 
-# ── DRF (W10) ───────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',   # Para el navegador
-        'rest_framework.authentication.TokenAuthentication',     # Para apps externas
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -150,7 +126,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-# ── JAZZMIN (W06) ───────────────────────────────────────────────────────────
 JAZZMIN_SETTINGS = {
     "site_title": "ERP Django Admin",
     "site_header": "ERP UTEC",
@@ -166,5 +141,4 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": True,
 }
 
-# ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
