@@ -1,179 +1,312 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Real Madrid | ERP System{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Fondo oscuro con un sutil patrón de cuadrícula estilo "Campo de juego" */
-    body {
-        background-color: #05080f !important; /* Negro azulado profundo */
-        background-image: 
-            linear-gradient(rgba(0, 83, 158, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 83, 158, 0.1) 1px, transparent 1px);
-        background-size: 40px 40px;
-        color: #E2EAF4;
-        font-family: 'Inter', sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&display=swap');
+
+    :root {
+        --noche: #05090a;
+        --carta: #0a1112;
+        --cesped: #39ff6a;
+        --oro: #FEBE10;
+        --azul: #00539E;
+        --tiza: #F2F6F0;
     }
 
-    /* Contenedor principal */
-    .madrid-hero {
-        padding: 3rem 1rem;
+    /* ===== Fondo: cancha de noche ===== */
+    body {
+        background-color: var(--noche) !important;
+        background-image:
+            repeating-linear-gradient(90deg,
+                rgba(57, 255, 106, 0.035) 0 90px,
+                rgba(0, 0, 0, 0) 90px 180px) !important;
+        color: var(--tiza);
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 70vmin;
+        height: 70vmin;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(242, 246, 240, 0.07);
+        border-radius: 50%;
+        box-shadow: 0 0 0 1px rgba(57, 255, 106, 0.04);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: rgba(242, 246, 240, 0.06);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* ===== Copa de las 15 al fondo (blanca intensa) ===== */
+    .copa-fondo {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        height: min(56vh, 470px);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 0;
+        color: #ffffff;
+        opacity: 0.7;
+        filter:
+            drop-shadow(0 0 4px rgba(255, 255, 255, 1))
+            drop-shadow(0 0 14px rgba(255, 255, 255, 0.85))
+            drop-shadow(0 0 32px rgba(255, 255, 255, 0.55));
+    }
+
+    .copa-fondo svg {
+        height: 100%;
+        width: auto;
+        display: block;
+    }
+
+    /* ===== Logo estilo grafiti ===== */
+    .futbol-hero {
+        position: relative;
+        z-index: 1;
+        padding: 2.5rem 1rem 3rem;
         text-align: center;
     }
 
-    /* Título Principal (Letras del Madrid con efecto Neón Blanco y Dorado) */
-    .madrid-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 4.5rem;
-        font-weight: 900;
-        color: #FFFFFF;
-        letter-spacing: 4px;
-        margin-bottom: 0.5rem;
-        text-shadow: 
-            0 0 10px rgba(255, 255, 255, 0.8),
-            0 0 20px rgba(254, 190, 16, 0.6),
-            0 0 40px rgba(254, 190, 16, 0.4);
+    .logo-grafiti {
+        position: relative;
         display: inline-block;
-        animation: floatTitle 4s ease-in-out infinite;
+        font-family: 'Permanent Marker', cursive;
+        font-size: clamp(3rem, 11vw, 7.5rem);
+        line-height: 1;
+        letter-spacing: 2px;
+        transform: rotate(-3deg);
+        margin: 1rem 0 0.5rem;
+        color: transparent;
+        background: linear-gradient(180deg, #ffffff 0%, #b9d2ff 55%, #5d8fe0 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-stroke: 0.09em var(--oro);
+        paint-order: stroke fill;
+        filter:
+            drop-shadow(0 0 14px rgba(254, 190, 16, 0.55))
+            drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.75));
+        animation: entradaLogo 0.9s cubic-bezier(.2, 1.4, .4, 1) both;
     }
 
-    @keyframes floatTitle {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(254, 190, 16, 0.8); }
-        100% { transform: translateY(0px); }
+    @keyframes entradaLogo {
+        from { transform: rotate(-3deg) scale(0.6); opacity: 0; }
+        to   { transform: rotate(-3deg) scale(1);   opacity: 1; }
     }
 
-    /* Subtítulo */
-    .madrid-subtitle {
-        font-size: 1rem;
-        color: #FEBE10; /* Dorado */
-        letter-spacing: 5px;
-        text-transform: uppercase;
-        font-weight: 700;
-        margin-bottom: 3rem;
-        text-shadow: 0 0 10px rgba(254, 190, 16, 0.5);
+    .balon {
+        position: absolute;
+        right: -0.55em;
+        bottom: -0.2em;
+        font-size: 0.5em;
+        -webkit-text-stroke: 0;
+        filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.6));
+        animation: rebote 1.6s ease-in-out infinite;
     }
 
-    /* Grid de Tarjetas (Estilo Premium) */
-    .madrid-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
+    @keyframes rebote {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50%      { transform: translateY(-0.35em) rotate(180deg); }
+    }
+
+    .lema {
+        font-family: 'Bangers', cursive;
+        font-size: 1.35rem;
+        letter-spacing: 4px;
+        color: var(--cesped);
+        text-shadow: 0 0 12px rgba(57, 255, 106, 0.6);
+        margin: 1.2rem 0 2.5rem;
+    }
+
+    /* ===== Tarjetas: filas centradas ===== */
+    .futbol-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.75rem;
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 0 1rem;
     }
 
-    /* Tarjeta estilo Cristal (Glassmorphism) con detalles Azul Rey */
-    .madrid-card {
-        background: rgba(10, 16, 30, 0.8);
-        border: 2px solid #1A365D; /* Azul oscuro */
-        border-radius: 16px;
-        padding: 2.5rem 1.5rem;
-        text-align: center;
-        text-decoration: none;
+    .futbol-card {
         position: relative;
-        transition: all 0.4s ease;
+        flex: 0 0 calc(33.333% - 1.2rem);
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem 1.25rem 1.25rem;
+        text-decoration: none;
+        background: rgba(10, 17, 18, 0.88) !important;
+        border: 1px solid rgba(242, 246, 240, 0.12);
+        border-radius: 14px;
+        box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
         overflow: hidden;
-        backdrop-filter: blur(10px);
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
-    /* Línea superior que se ilumina al pasar el mouse */
-    .madrid-card::before {
+    /* Linea de cal, como el area de la cancha */
+    .futbol-card::before {
         content: '';
         position: absolute;
-        top: 0; left: 0; right: 0; height: 4px;
-        background: #00539E; /* Azul Rey */
-        transition: background 0.4s ease, box-shadow 0.4s ease;
+        top: 0;
+        left: 50%;
+        width: 46%;
+        height: 26px;
+        transform: translateX(-50%);
+        border: 2px solid rgba(242, 246, 240, 0.16);
+        border-top: 0;
+        border-radius: 0 0 6px 6px;
     }
 
-    /* Efecto Hover de la tarjeta */
-    .madrid-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        border-color: #FEBE10; /* Borde Dorado */
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(254, 190, 16, 0.2);
-        background: rgba(15, 25, 45, 0.9);
+    .futbol-card:hover,
+    .futbol-card:focus-visible {
+        transform: translateY(-6px);
+        border-color: var(--cesped);
+        box-shadow:
+            0 14px 30px rgba(0, 0, 0, 0.6),
+            0 0 26px rgba(57, 255, 106, 0.25),
+            inset 0 0 40px rgba(0, 0, 0, 0.6);
+        outline: none;
     }
 
-    .madrid-card:hover::before {
-        background: #FEBE10; /* La línea superior cambia a Dorado */
-        box-shadow: 0 0 15px rgba(254, 190, 16, 0.8);
+    .futbol-escudo {
+        display: block;
+        width: 104px;
+        height: 104px;
+        margin-top: 0.8rem;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #f4f6ee;
+        border: 2px solid rgba(254, 190, 16, 0.6);
+        box-shadow: 0 0 18px rgba(254, 190, 16, 0.35);
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
-    /* Iconos */
-    .madrid-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        display: inline-block;
-        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-        transition: transform 0.4s ease;
+    .futbol-escudo img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .madrid-card:hover .madrid-icon {
-        transform: scale(1.15) rotate(5deg);
-        filter: drop-shadow(0 0 15px rgba(254, 190, 16, 0.6)); /* Brillo dorado */
+    .futbol-card:hover .futbol-escudo {
+        transform: scale(1.08) rotate(-3deg);
+        border-color: var(--cesped);
+        box-shadow: 0 0 26px rgba(57, 255, 106, 0.55);
     }
 
-    /* Título de la tarjeta */
-    .madrid-card h3 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.5rem;
-        color: #FFFFFF;
-        margin-bottom: 0.5rem;
-        letter-spacing: 1px;
-        transition: color 0.3s ease;
+    .futbol-etiqueta {
+        width: 100%;
+        margin-top: 1.25rem;
+        padding: 0.55rem 0 0.7rem;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.55);
+        border-bottom: 1px dashed rgba(242, 246, 240, 0.3);
     }
 
-    .madrid-card:hover h3 {
-        color: #FEBE10; /* Cambia a Dorado al pasar el mouse */
-    }
-
-    /* Texto descriptivo */
-    .madrid-card p {
-        color: #8AA0B8;
-        font-size: 0.9rem;
+    .futbol-etiqueta h3 {
+        font-family: 'Bangers', cursive;
+        font-size: 1.9rem;
+        font-weight: 400;
+        letter-spacing: 2px;
         margin: 0;
-        line-height: 1.5;
-        font-family: 'Inter', sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        color: var(--cesped) !important;
+        text-shadow: 0 0 10px rgba(57, 255, 106, 0.55), 2px 2px 0 #000;
     }
 
-    /* Línea decorativa */
-    .gold-line {
-        width: 150px;
-        height: 3px;
-        background: #FEBE10;
-        margin: 1.5rem auto;
-        box-shadow: 0 0 15px rgba(254, 190, 16, 0.8);
-        border-radius: 2px;
+    .futbol-etiqueta p {
+        margin: 0.2rem 0 0;
+        font-size: 0.85rem;
+        color: #8fa59a !important;
     }
 
-    /* Responsividad */
-    @media (max-width: 768px) {
-        .madrid-title { font-size: 2.8rem; }
-        .madrid-grid { grid-template-columns: 1fr; }
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+        .futbol-card { flex-basis: calc(50% - 1rem); }
+    }
+
+    @media (max-width: 560px) {
+        .futbol-card { flex-basis: 100%; min-height: 210px; }
+        .lema { font-size: 1.05rem; letter-spacing: 2px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .logo-grafiti, .balon { animation: none; }
+        .futbol-card, .futbol-escudo { transition: none; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="madrid-hero">
-    <!-- Título Principal -->
-    <h1 class="madrid-title">ℛℯ𝒶𝓁 ℳ𝒶𝒹𝓇𝒾𝒹</h1>
-    <div class="gold-line"></div>
-    <p class="madrid-subtitle">Hala Madrid · Sistema ERP</p>
+<!-- Copa de las 15 (fondo) -->
+<div class="copa-fondo" aria-hidden="true">
+    <svg viewBox="150 70 300 350" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <g id="lado" fill="currentColor">
+                <!-- asa con espiral superior -->
+                <path d="M243 412 C203 360 160 250 163 162 C165 110 196 80 233 89 C258 97 264 126 252 142 C248 130 240 120 227 114 C205 106 179 122 179 168 C182 250 206 335 243 412 Z"/>
+                <!-- lado del cuerpo que baja hasta la punta -->
+                <path d="M205 224 L213 224 C215 300 228 360 243 411 C222 362 208 300 205 224 Z"/>
+                <!-- rizo que une asa y copa -->
+                <path d="M200 150 C216 147 232 155 236 171 C227 164 214 161 200 150 Z"/>
+            </g>
+        </defs>
+        <use href="#lado"/>
+        <use href="#lado" transform="translate(600,0) scale(-1,1)"/>
+        <!-- copa: borde, paredes y base del cuello -->
+        <path fill="currentColor" d="M224 154 Q300 172 376 154 L372 164 Q300 181 228 164 Z"/>
+        <path fill="currentColor" d="M228 163 C236 178 247 184 246 193 L240 195 C241 188 232 182 222 166 Z"/>
+        <path fill="currentColor" d="M372 163 C364 178 353 184 354 193 L360 195 C359 188 368 182 378 166 Z"/>
+        <path fill="currentColor" d="M240 193 Q300 203 360 193 L360 199 Q300 209 240 199 Z"/>
+        <!-- ceja del cuerpo -->
+        <path fill="currentColor" d="M205 221 Q300 200 395 221 L395 228 Q300 208 205 228 Z"/>
+        <!-- numero 1 -->
+        <path fill="currentColor" d="M233 266 L264 240 L282 240 L282 361 L291 361 L291 375 L244 375 L244 361 L263 361 L263 266 L238 282 Z"/>
+        <!-- numero 5 -->
+        <path fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter"
+              d="M360 247.5 L318 247.5 L313 291 C330 282 363 288 363 329 C363 361 330 373 303 360"/>
+    </svg>
+</div>
 
-    <!-- Grid de Módulos -->
-    <div class="container">
-        <div class="madrid-grid">
-            {% for m in modulos %}
-            <a href="{{ m.url }}" class="madrid-card">
-                <span class="madrid-icon">{{ m.icono }}</span>
+<div class="futbol-hero">
+    <h1 class="logo-grafiti">
+        Real Madrid
+        <span class="balon" aria-hidden="true">⚽</span>
+    </h1>
+    <p class="lema">Hala Madrid · Sistema ERP</p>
+
+    <div class="futbol-grid">
+        {% for m in modulos %}
+        <a href="{{ m.url }}" class="futbol-card">
+            <span class="futbol-escudo">
+                <img src="{% static 'img/escudos/' %}{% cycle 'escudo_2002.png' 'escudo_1998.png' 'escudo_1941.png' 'escudo_1931.png' 'escudo_1920.png' 'escudo_1908.png' %}" alt="Escudo {{ m.nombre }}">
+            </span>
+            <div class="futbol-etiqueta">
                 <h3>{{ m.nombre }}</h3>
                 <p>{{ m.descripcion }}</p>
-            </a>
-            {% endfor %}
-        </div>
+            </div>
+        </a>
+        {% endfor %}
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

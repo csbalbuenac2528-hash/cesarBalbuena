@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',       
     'rest_framework',
     'rest_framework.authtoken',    
+    'django_filters',              # <-- AGREGADO W13
     'whitenoise.runserver_nostatic',
     'clientes',
     'proveedores',
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'ventas',
     'reportes',
     'configuracion',
+    'catalogo',                    # <-- AGREGADO W13
+
 ]
 
 MIDDLEWARE = [
@@ -64,6 +67,8 @@ TEMPLATES = [
                 'django.template.context_processors.request', 
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages',
+                'catalogo.context_processors.carrito_info',  # <-- AGREGAR
             ],
         },
     },
