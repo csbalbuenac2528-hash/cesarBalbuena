@@ -1,14 +1,16 @@
 """
 Django settings for core project.
-ERP Django — UTEC Celaya (Desarrollo Local).
+ERP Django — UTEC Celaya (W01 - W14).
 """
 
 from pathlib import Path
 import environ
 import os
 
+# ── RUTAS BASE ──────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ── VARIABLES DE ENTORNO ────────────────────────────────────────────────────
 env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(BASE_DIR / '.env')
 
@@ -16,6 +18,7 @@ SECRET_KEY = env('SECRET_KEY', default='dev-key-insegura-solo-para-desarrollo')
 DEBUG = env('DEBUG', default=True)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
+# ── APPS INSTALADAS ─────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'jazzmin',  
     'django.contrib.admin',
@@ -30,7 +33,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',       
     'rest_framework',
     'rest_framework.authtoken',    
-    'django_filters',              # <-- AGREGADO W13
+    'django_filters',
     'whitenoise.runserver_nostatic',
     'clientes',
     'proveedores',
@@ -38,10 +41,10 @@ INSTALLED_APPS = [
     'ventas',
     'reportes',
     'configuracion',
-    'catalogo',                    # <-- AGREGADO W13
-
+    'catalogo',
 ]
 
+# ── MIDDLEWARE ──────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -56,6 +59,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
+# ── TEMPLATES ───────────────────────────────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,8 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request', 
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.contrib.messages.context_processors.messages',
-                'catalogo.context_processors.carrito_info',  # <-- AGREGAR
+                'catalogo.context_processors.carrito_info',
             ],
         },
     },
@@ -76,6 +79,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# ── BASE DE DATOS ───────────────────────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -83,6 +87,7 @@ DATABASES = {
     }
 }
 
+# ── VALIDACIÓN DE CONTRASEÑAS ───────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -90,20 +95,24 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ── INTERNACIONALIZACIÓN ────────────────────────────────────────────────────
 LANGUAGE_CODE = 'es-mx'
 TIME_ZONE     = 'America/Mexico_City'
 USE_I18N      = True
 USE_TZ        = True
 
+# ── ARCHIVOS ESTÁTICOS Y MEDIA ──────────────────────────────────────────────
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# NOTA: Se quitó STATICFILES_STORAGE para evitar fallos con Jazzmin en tests
+# ESTA LÍNEA COMENTADA ARREGLA EL ERROR DE JAZZMIN EN LOS TESTS
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# ── AUTENTICACIÓN ───────────────────────────────────────────────────────────
 LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = '/productos/'
 LOGOUT_REDIRECT_URL = '/'
@@ -119,6 +128,7 @@ ACCOUNT_EMAIL_VERIFICATION     = 'none'
 ACCOUNT_LOGOUT_ON_GET          = True
 ACCOUNT_SESSION_REMEMBER       = True
 
+# ── DRF ─────────────────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -131,6 +141,12 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
+# ── STRIPE ──────────────────────────────────────────────────────────────────
+STRIPE_SECRET_KEY      = env('STRIPE_SECRET_KEY', default='sk_test_placeholder')
+STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_placeholder')
+STRIPE_WEBHOOK_SECRET  = env('STRIPE_WEBHOOK_SECRET', default='whsec_placeholder')
+
+# ── JAZZMIN ─────────────────────────────────────────────────────────────────
 JAZZMIN_SETTINGS = {
     "site_title": "ERP Django Admin",
     "site_header": "ERP UTEC",
@@ -146,4 +162,5 @@ JAZZMIN_SETTINGS = {
     "navigation_expanded": True,
 }
 
+# ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
