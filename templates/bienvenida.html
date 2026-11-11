@@ -391,7 +391,7 @@
     // la musica arranca con el primer clic o tecla
     function primerToque() {
         quitarEscuchas();
-        if (quiereMusica && audio.paused) { reproducir(); }
+        if (quiereMusica && audio.paused) { reproducir(); } 
     }
     function quitarEscuchas() {
         document.removeEventListener('pointerdown', primerToque);
@@ -402,5 +402,5 @@
 
     actualizar();
 })();
-</script>
+</script>      
 {% endblock %}
