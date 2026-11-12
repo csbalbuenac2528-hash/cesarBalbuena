@@ -157,18 +157,20 @@ def checkout(request):
                 items_snapshot=snapshot,
             )
 
-            # 3. Crear PaymentIntent en Stripe (monto en centavos)
-            monto_centavos = int(totales['total'] * 100)
-            intent = stripe.PaymentIntent.create(
-                amount=monto_centavos,
-                currency='mxn',
-                metadata={
-                    'pedido_id': pedido.pk,
-                    'pedido_num': pedido.numero_pedido,
-                    'cliente': cliente.nombre,
-                },
-                idempotency_key=f'pedido-{pedido.pk}',
-            )
+            # 3. SIMULACIÓN DE STRIPE (Comentado para evitar error de API Key)
+            # monto_centavos = int(totales['total'] * 100)
+            # intent = stripe.PaymentIntent.create(
+            #     amount=monto_centavos,
+            #     currency='mxn',
+            #     metadata={
+            #         'pedido_id': pedido.pk,
+            #         'pedido_num': pedido.numero_pedido,
+            #         'cliente': cliente.nombre,
+            #     },
+            #     idempotency_key=f'pedido-{pedido.pk}',
+            # )
+            
+            client_secret_falso = "pi_simulado_secret_123"
 
             # 4. Retornar client_secret al template
             return render(request, 'catalogo/checkout.html', {
@@ -176,7 +178,7 @@ def checkout(request):
                 'items': items,
                 'totales': totales,
                 'pedido': pedido,
-                'client_secret': intent.client_secret,
+                'client_secret': client_secret_falso,
                 'publishable_key': publishable_key,
             })
 
@@ -200,12 +202,7 @@ def checkout(request):
 # ── CONFIRMACIÓN DE PAGO (W15) ──────────────────────────────────────────
 
 def pago_exitoso(request, pedido_id: int):
-    """Vista de confirmación post-pago exitoso.
-    
-    NOTA: En modo de prueba, forzamos el estado a 'pagado' para 
-    que el usuario pueda ver la pantalla de éxito y descargar su factura,
-    incluso si Stripe falla por no tener claves reales.
-    """
+    """Vista de confirmación post-pago exitoso."""
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
     # Forzar el pago para el proyecto escolar
