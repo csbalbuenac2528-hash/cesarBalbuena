@@ -1,6 +1,6 @@
 """
 Django settings for core project.
-ERP Django — UTEC Celaya (W01 - W14).
+ERP Django — UTEC Celaya (W01 - W15).
 """
 
 from pathlib import Path
@@ -71,7 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request', 
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'catalogo.context_processors.carrito_info',
+                'catalogo.context_processors.carrito_info',  # <-- LÍNEA CLAVE W13
             ],
         },
     },
@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-# ── STRIPE ──────────────────────────────────────────────────────────────────
+# ── STRIPE (W14) ────────────────────────────────────────────────────────────
 STRIPE_SECRET_KEY      = env('STRIPE_SECRET_KEY', default='sk_test_placeholder')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='pk_test_placeholder')
 STRIPE_WEBHOOK_SECRET  = env('STRIPE_WEBHOOK_SECRET', default='whsec_placeholder')
@@ -154,6 +154,11 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Bienvenido al ERP de UTEC Celaya",
     "copyright": "UTEC Celaya",
     "search_model": ["auth.User", "productos.Producto", "clientes.Cliente"],
+    
+    # ── ESTA ES LA LÍNEA QUE PEDISTE ──
+    "custom_css": "css/madrid.css",
+    # ---------------------------------
+    
     "topmenu_links": [
         {"name": "Inicio", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Ver Sitio", "url": "/", "new_window": True},
