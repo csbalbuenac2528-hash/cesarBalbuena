@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
@@ -243,6 +243,9 @@
         }
     </style>
     {% block extra_css %}{% endblock %}
+
+    <!-- Tema Real Madrid / futbol (va al final para aplicarse a todas las paginas) -->
+    <link rel="stylesheet" href="{% static 'css/madrid.css' %}">
 </head>
 <body>
 
@@ -251,27 +254,30 @@
     <a class="erp-brand" href="/">📦 ERP Django <span>· Cesar RMD</span></a>
 
     <div class="erp-nav-links">
-        <!-- Rutas actualizadas a 'lista' para la W07 -->
-        <a href="{% url 'productos:lista' %}"
-           class="erp-nav-link {% block nav_productos %}{% endblock %}">Productos</a>
-        <a href="{% url 'clientes:lista' %}"
-           class="erp-nav-link {% block nav_clientes %}{% endblock %}">Clientes</a>
-        <a href="{% url 'proveedores:lista' %}"
-           class="erp-nav-link {% block nav_proveedores %}{% endblock %}">Proveedores</a>
-        <a href="{% url 'ventas:lista' %}"
-           class="erp-nav-link {% block nav_ventas %}{% endblock %}">Ventas</a>
+        <a href="{% url 'productos:lista' %}" class="erp-nav-link {% block nav_productos %}{% endblock %}">Productos</a>
+        <a href="{% url 'clientes:lista' %}" class="erp-nav-link {% block nav_clientes %}{% endblock %}">Clientes</a>
+        <a href="{% url 'proveedores:lista' %}" class="erp-nav-link {% block nav_proveedores %}{% endblock %}">Proveedores</a>
+        <a href="{% url 'ventas:lista' %}" class="erp-nav-link {% block nav_ventas %}{% endblock %}">Ventas</a>
+        <a href="{% url 'reportes:inicio' %}" class="erp-nav-link {% block nav_reportes %}{% endblock %}">Reportes</a>
         
-        <!-- Reportes se queda con 'inicio' hasta su semana -->
-        <a href="{% url 'reportes:inicio' %}"
-           class="erp-nav-link {% block nav_reportes %}{% endblock %}">Reportes</a>
+        <!-- ENLACES DE LA TIENDA (W13) -->
+        <a href="{% url 'catalogo:catalogo' %}" class="erp-nav-link {% block nav_catalogo %}{% endblock %}">
+            🛒 Tienda
+        </a>
+        {% if carrito_total_items > 0 %}
+        <a href="{% url 'catalogo:carrito' %}" class="erp-nav-link" style="color:#FEBE10; font-weight:bold;">
+            🛍️ ({{ carrito_total_items }})
+        </a>
+        {% endif %}
+        
         <a href="/admin/" class="erp-nav-link">Admin</a>
         
         {% if user.is_authenticated %}
-            <a href="/accounts/logout/" class="erp-nav-link">
+            <a href="{% url 'account_logout' %}" class="erp-nav-link">
                 Salir ({{ user.username }})
             </a>
         {% else %}
-            <a href="/accounts/login/" class="erp-nav-link">Entrar</a>
+            <a href="{% url 'account_login' %}" class="erp-nav-link">Entrar</a>
         {% endif %}
         <button class="theme-toggle" id="themeBtn" title="Modo claro/oscuro">🌙</button>
     </div>
@@ -281,11 +287,9 @@
 {% if messages %}
 <div class="container mt-3">
     {% for m in messages %}
-    <div class="erp-alert-{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% else %}info{% endif %} d-flex justify-content-between align-items-center mb-2"
-         role="alert">
+    <div class="erp-alert-{% if m.tags == 'error' %}danger{% elif m.tags == 'success' %}success{% else %}info{% endif %} d-flex justify-content-between align-items-center mb-2" role="alert">
         <span>{{ m }}</span>
-        <button onclick="this.parentElement.style.display='none'"
-                style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:inherit;">×</button>
+        <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:inherit;">×</button>
     </div>
     {% endfor %}
 </div>
@@ -300,7 +304,7 @@
 
 <!-- FOOTER -->
 <footer class="erp-footer">
-    ERP Django · Django 4.2 LTS · Fable 5 AzulERP · Cesar RMD · Espiral 3 (W07)
+    ERP Django · Django 4.2 LTS · Fable 5 AzulERP · Cesar RMD · Espiral 5
 </footer>
 
 <!-- Bootstrap JS -->
