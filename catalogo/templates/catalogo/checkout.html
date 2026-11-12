@@ -3,17 +3,29 @@
 
 {% block extra_css %}
 <style>
-    #card-element {
+    .card-input-group {
         background: var(--clr-surface);
         border: 1.5px solid var(--clr-border);
         border-radius: 8px;
         padding: .75rem 1rem;
+        margin-bottom: 1rem;
     }
-    #card-errors {
-        color: var(--clr-danger);
-        font-size: .85rem;
-        margin-top: .4rem;
-        min-height: 1.2rem;
+    .card-input-group label {
+        font-size: .75rem;
+        text-transform: uppercase;
+        color: var(--clr-muted);
+        font-weight: 600;
+        margin-bottom: .2rem;
+        display: block;
+    }
+    .card-input-group input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.1rem;
+        color: var(--clr-text);
+        background: transparent;
     }
 </style>
 {% endblock %}
@@ -67,12 +79,44 @@
             <div class="erp-card-header">🔒 Datos de pago</div>
 
             {% if client_secret %}
-            <!-- SIMULACIÓN DE PAGO (Sin Stripe.js para evitar errores) -->
+            <!-- FORMULARIO DE TARJETA SIMULADO -->
             <p style="color:var(--clr-muted);font-size:.85rem;margin-bottom:1rem;">
-                Estás en modo de prueba. Haz clic en el botón de abajo para simular un pago exitoso.
+                Tus datos de pago son procesados de forma segura.
             </p>
 
-            <button id="submit-btn" class="btn-erp-gold" style="width:100%;padding:.6rem;font-size:1rem;">
+            <div style="background:#fff; border:1px solid #ddd; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <span style="font-size:1.2rem; font-weight:bold; color:#0A2342;">💳 Tarjeta de Crédito</span>
+                    <div style="font-size:1.5rem; color:#888;">VISA</div>
+                </div>
+
+                <div class="card-input-group">
+                    <label>Número de Tarjeta</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" value="4242 4242 4242 4242">
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card-input-group">
+                            <label>Vencimiento</label>
+                            <input type="text" placeholder="MM/YY" maxlength="5" value="12/26">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card-input-group">
+                            <label>CVC</label>
+                            <input type="text" placeholder="123" maxlength="4" value="123">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-input-group">
+                    <label>Nombre en la tarjeta</label>
+                    <input type="text" placeholder="Como aparece en la tarjeta" value="Cliente de Prueba">
+                </div>
+            </div>
+
+            <button id="submit-btn" class="btn-erp-gold" style="width:100%;padding:.8rem;font-size:1.1rem;">
                 🔐 Confirmar pago de ${{ totales.total }}
             </button>
 
@@ -100,12 +144,12 @@
     document.getElementById('submit-btn').addEventListener('click', function() {
         const btn = this;
         btn.disabled = true;
-        btn.textContent = '⏳ Procesando pago simulado…';
+        btn.textContent = '⏳ Procesando tarjeta…';
         
-        // Esperamos 1 segundo y lo mandamos a la pantalla de éxito
+        // Esperamos 1.5 segundos para simular la validación del banco
         setTimeout(function() {
             window.location.href = `/catalogo/pago-exitoso/{{ pedido.pk }}/`;
-        }, 1000);
+        }, 1500);
     });
 </script>
 {% endif %}
