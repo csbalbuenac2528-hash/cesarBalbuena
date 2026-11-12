@@ -1,5 +1,5 @@
 # ventas/views.py
-"""Vistas de la app ventas — W12 (CRUD, RBAC y generación de PDF)."""
+"""Vistas de la app ventas — W15 (CRUD, RBAC y generación de PDF)."""
 
 import io
 from decimal import Decimal, ROUND_HALF_UP
@@ -88,7 +88,7 @@ class VentaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         return response
 
 
-# ── Generación de PDF (W12) ──────────────────────────────────────────────
+# ── Generación de PDF (W12/W15) ──────────────────────────────────────────
 
 @login_required
 def venta_pdf(request, venta_id):
@@ -123,4 +123,4 @@ def venta_pdf(request, venta_id):
         response["Content-Disposition"] = f'attachment; filename="factura_{venta.pk}.pdf"'
         return response
         
-    return HttpResponse("Error al generar el PDF", status=500)  
+    return HttpResponse("Error al generar el PDF", status=500)
