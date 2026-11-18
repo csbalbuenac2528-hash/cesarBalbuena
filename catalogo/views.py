@@ -3,6 +3,7 @@
 
 import stripe
 from decimal import Decimal
+from django.db.models import F
 
 from django.conf import settings
 from django.contrib import messages
@@ -157,19 +158,7 @@ def checkout(request):
                 items_snapshot=snapshot,
             )
 
-            # 3. SIMULACIÓN DE STRIPE (Comentado para evitar error de API Key)
-            # monto_centavos = int(totales['total'] * 100)
-            # intent = stripe.PaymentIntent.create(
-            #     amount=monto_centavos,
-            #     currency='mxn',
-            #     metadata={
-            #         'pedido_id': pedido.pk,
-            #         'pedido_num': pedido.numero_pedido,
-            #         'cliente': cliente.nombre,
-            #     },
-            #     idempotency_key=f'pedido-{pedido.pk}',
-            # )
-            
+            # 3. SIMULACIÓN DE STRIPE (Para evitar error de API Key)
             client_secret_falso = "pi_simulado_secret_123"
 
             # 4. Retornar client_secret al template
@@ -205,10 +194,22 @@ def pago_exitoso(request, pedido_id: int):
     """Vista de confirmación post-pago exitoso."""
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
-    # Forzar el pago para el proyecto escolar
+    # Forzar el pago para el proyecto escolar (Simula el Webhook)
     if pedido.estado == 'pendiente':
         pedido.estado = 'pagado'
         pedido.save(update_fields=['estado'])
+
+        # Descontar exactamente 1 unidad de stock de cada producto comprado
+        if pedido.items_snapshot:
+            for item in pedido.items_snapshot:
+                producto_id = item.get('producto_id')
+                
+                if producto_id:
+                    # Restamos 1 unidad (siempre que haya al menos 1 en stock)
+                    Producto.objects.filter(
+                        pk=producto_id,
+                        stock__gte=1
+                    ).update(stock=F('stock') - 1)
 
     # Vaciar el carrito al confirmar el pago
     _guardar_carrito(request, {})
