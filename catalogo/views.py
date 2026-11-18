@@ -158,16 +158,26 @@ def checkout(request):
                 items_snapshot=snapshot,
             )
 
-            # 3. SIMULACIÓN DE STRIPE (Para evitar error de API Key)
-            client_secret_falso = "pi_simulado_secret_123"
+            # 3. CREAR EL PAGO REAL EN STRIPE
+            monto_centavos = int(totales['total'] * 100)
+            intent = stripe.PaymentIntent.create(
+                amount=monto_centavos,
+                currency='mxn',
+                metadata={
+                    'pedido_id': pedido.pk,
+                    'pedido_num': pedido.numero_pedido,
+                    'cliente': cliente.nombre,
+                },
+                idempotency_key=f'pedido-{pedido.pk}',
+            )
 
-            # 4. Retornar client_secret al template
+            # 4. Retornar el client_secret REAL de Stripe
             return render(request, 'catalogo/checkout.html', {
                 'carrito': carrito,
                 'items': items,
                 'totales': totales,
                 'pedido': pedido,
-                'client_secret': client_secret_falso,
+                'client_secret': intent.client_secret,
                 'publishable_key': publishable_key,
             })
 
