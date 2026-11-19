@@ -10,8 +10,12 @@ Resultado esperado:
     Ran 12 tests in X.XXXs
     OK
 """
-from decimal import Decimal
+"""Suite de pruebas W07 — Vistas de lectura: ListView y DetailView.
 
+Verifica: HTTP 200, templates correctos, contexto con objetos,
+          paginación y 404 para IDs inexistentes.
+"""
+from decimal import Decimal
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -45,7 +49,9 @@ class ProductoVistaTest(TestCase):
         """El contexto de la lista debe contener el producto creado."""
         r = self.client.get(reverse('productos:lista'))
         self.assertIn('productos', r.context)
-        self.assertContains(r, 'Laptop Test')
+        # CORRECCIÓN: Verificamos en el contexto (queryset) en lugar del HTML
+        nombres = [p.nombre for p in r.context['productos']]
+        self.assertIn('Laptop Test', nombres)
 
     def test_detalle_producto_http_200(self):
         """GET /productos/<id>/ debe devolver HTTP 200."""

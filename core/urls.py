@@ -47,6 +47,6 @@ urlpatterns = [
     path('reportes/',    include('reportes.urls',    namespace='reportes')),
 ]
 
-# ── ESTO ES LO QUE HACE QUE LAS IMÁGENES SE VEAN EN LA TIENDA (MEDIA) ──
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# ── SERVIDOR DE ARCHIVOS MEDIA (IMÁGENES) ──
+# Forzamos que se sirvan incluso en producción (Solo para proyecto escolar)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

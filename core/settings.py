@@ -169,3 +169,15 @@ JAZZMIN_SETTINGS = {
 
 # ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+## ── CELERY (Tareas asíncronas) ──────────────────────────────────────────────
+CELERY_BROKER_URL = 'memory://'
+CELERY_RESULT_BACKEND = 'cache+memory://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+
+# --- MODO EAGER (Ejecuta tareas al instante sin Redis) ---
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
