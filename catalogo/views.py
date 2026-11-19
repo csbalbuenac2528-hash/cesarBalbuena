@@ -1,10 +1,10 @@
 # catalogo/views.py
-"""Vistas del catálogo, carrito y checkout con Stripe — W13/W14/W15."""
+"""Vistas del catálogo, carrito y checkout con Stripe — W13/W14/W15/W16."""
 
 import stripe
 from decimal import Decimal
 from django.db.models import F
-
+from ventas.tasks import enviar_confirmacion_pedido  # <-- W16
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -198,10 +198,10 @@ def checkout(request):
     })
 
 
-# ── CONFIRMACIÓN DE PAGO (W15) ──────────────────────────────────────────
+# ── CONFIRMACIÓN DE PAGO (W15/W16) ──────────────────────────────────────
 
 def pago_exitoso(request, pedido_id: int):
-    """Vista de confirmación post-pago exitoso."""
+    """Vista de confirmación post-pago exitoso — W16."""
     pedido = get_object_or_404(Pedido, pk=pedido_id)
 
     # Forzar el pago para el proyecto escolar (Simula el Webhook)
@@ -228,6 +228,10 @@ def pago_exitoso(request, pedido_id: int):
         request,
         f'¡Pago exitoso! Tu pedido {pedido.numero_pedido} está confirmado. Total: ${pedido.total_pagado}'
     )
+
+    # ── NUEVO W16: Disparar la tarea asíncrona ────────────────────────
+    enviar_confirmacion_pedido.delay(pedido.pk)
+    # ─────────────────────────────────────────────────────────────────
 
     return render(request, 'catalogo/pago_exitoso.html', {'pedido': pedido})
 
