@@ -71,6 +71,12 @@ class Pedido(models.Model):
     fecha_pedido = models.DateTimeField(auto_now_add=True, verbose_name='Fecha del pedido')
     fecha_entrega = models.DateField(null=True, blank=True, verbose_name='Fecha de entrega')
     total_pagado = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Total pagado')
+    
+    correo_enviado = models.BooleanField(
+        default=False,
+        verbose_name='Correo de confirmación enviado',
+        help_text='True cuando se envió el correo de confirmación al cliente.'
+    )
 
     # ===== NUEVO CAMPO W15 =====
     items_snapshot = models.JSONField(

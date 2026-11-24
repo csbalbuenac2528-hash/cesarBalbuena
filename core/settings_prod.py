@@ -46,6 +46,10 @@ if _bucket:
     AWS_QUERYSTRING_AUTH    = False
     MEDIA_URL               = f'https://{_bucket}.s3.amazonaws.com/'
 
+# ── CORREO EN PRODUCCIÓN (W17) ──────────────────────────────────────────────
+# En producción usamos SendGrid de verdad (requiere la API KEY en Render)
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

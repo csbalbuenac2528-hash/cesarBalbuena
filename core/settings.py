@@ -1,6 +1,6 @@
 """
 Django settings for core project.
-ERP Django — UTEC Celaya (W01 - W15).
+ERP Django — UTEC Celaya (W01 - W17).
 """
 
 from pathlib import Path
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',       
     'rest_framework',
     'rest_framework.authtoken',    
+    'anymail',                     # <-- AGREGADO W17
     'django_filters',
     'whitenoise.runserver_nostatic',
     'clientes',
@@ -71,7 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request', 
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'catalogo.context_processors.carrito_info',  # <-- LÍNEA CLAVE W13
+                'catalogo.context_processors.carrito_info',
             ],
         },
     },
@@ -105,9 +106,6 @@ USE_TZ        = True
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
-# ESTA LÍNEA COMENTADA ARREGLA EL ERROR DE JAZZMIN EN LOS TESTS
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL  = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -154,11 +152,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Bienvenido al ERP de UTEC Celaya",
     "copyright": "UTEC Celaya",
     "search_model": ["auth.User", "productos.Producto", "clientes.Cliente"],
-    
-    # ── ESTA ES LA LÍNEA QUE PEDISTE ──
     "custom_css": "css/madrid.css",
-    # ---------------------------------
-    
     "topmenu_links": [
         {"name": "Inicio", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Ver Sitio", "url": "/", "new_window": True},
@@ -170,7 +164,7 @@ JAZZMIN_SETTINGS = {
 # ── DEFAULT AUTO FIELD ──────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-## ── CELERY (Tareas asíncronas) ──────────────────────────────────────────────
+# ── CELERY (Tareas asíncronas) ──────────────────────────────────────────────
 CELERY_BROKER_URL = 'memory://'
 CELERY_RESULT_BACKEND = 'cache+memory://'
 CELERY_ACCEPT_CONTENT = ['json']
@@ -178,6 +172,26 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
-# --- MODO EAGER (Ejecuta tareas al instante sin Redis) ---
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
+
+# ── CORREO ELECTRÓNICO (W17) ──────────────────────────────────────────────
+EMAIL_BACKEND = env(
+    'EMAIL_BACKEND',
+    default='django.core.mail.backends.console.EmailBackend'
+)
+DEFAULT_FROM_EMAIL = env(
+    'DEFAULT_FROM_EMAIL',
+    default='ERP Django <noreply@erp-django.com>'
+)
+EMAIL_SUBJECT_PREFIX = '[ERP Django] '
+ADMINS = [
+    ('Admin ERP', env('ADMIN_EMAIL', default='admin@erp-django.com')),
+]
+SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
+ANYMAIL = {
+    'SENDGRID_API_KEY': SENDGRID_API_KEY,
+    'SEND_DEFAULTS': {
+        'esp_extra': {'ip_pool_name': 'transactional'},
+    },
+}
