@@ -230,7 +230,11 @@ def pago_exitoso(request, pedido_id: int):
     )
 
     # ── NUEVO W16: Disparar la tarea asíncrona ────────────────────────
-    enviar_confirmacion_pedido.delay(pedido.pk)
+        # Intentar enviar el correo, pero si falla, no romper la página
+    try:
+        enviar_confirmacion_pedido.delay(pedido.pk)
+    except Exception as e:
+        print(f"Error al enviar correo: {e}")
     # ─────────────────────────────────────────────────────────────────
 
     return render(request, 'catalogo/pago_exitoso.html', {'pedido': pedido})
