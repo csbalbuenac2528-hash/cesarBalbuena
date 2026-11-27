@@ -1,7 +1,10 @@
 """
 Django settings for core project.
-ERP Django — UTEC Celaya (W01 - W17).
+ERP Django — UTEC Celaya (W01 - W18).
 """
+
+from celery.schedules import crontab
+from datetime import timedelta
 
 from pathlib import Path
 import environ
@@ -33,7 +36,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',       
     'rest_framework',
     'rest_framework.authtoken',    
-    'anymail',                     # <-- AGREGADO W17
+    'anymail',
     'django_filters',
     'whitenoise.runserver_nostatic',
     'clientes',
@@ -195,3 +198,33 @@ ANYMAIL = {
         'esp_extra': {'ip_pool_name': 'transactional'},
     },
 }
+
+# ── CELERY BEAT (W18) ───────────────────────────────────────────────────────
+
+# Hora del reporte diario (hora de México), configurable sin tocar código:
+#   Render → Environment → REPORTE_DIARIO_HORA=10:00
+REPORTE_DIARIO_HORA = env('REPORTE_DIARIO_HORA', default='08:00')
+try:
+    _rep_h, _rep_m = (int(x) for x in REPORTE_DIARIO_HORA.split(':'))
+except ValueError:
+    _rep_h, _rep_m = 8, 0
+
+CELERY_BEAT_SCHEDULE = {
+    # Verificar stock bajo cada hora
+    'verificar-stock-bajo-cada-hora': {
+        'task':     'ventas.verificar_stock_bajo',
+        'schedule': timedelta(hours=1),
+        'args':     (5,),   # umbral = 5 unidades
+        'options':  {'queue': 'erp_django'},
+    },
+
+    # Reporte de ventas diario (default 8:00 AM hora México)
+    'reporte-ventas-diario-8am': {
+        'task':     'ventas.reporte_ventas_diario',
+        'schedule': crontab(hour=_rep_h, minute=_rep_m),
+        'options':  {'queue': 'erp_django'},
+    },
+}
+
+# Necesario para que Beat use la zona horaria de Django (no UTC)
+CELERY_BEAT_TIMEZONE = TIME_ZONE   # 'America/Mexico_City'
